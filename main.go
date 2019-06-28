@@ -68,11 +68,15 @@ func addUser(respWriter http.ResponseWriter, request *http.Request) {
 	respWriter.Header().Set("Content-Type", "application/json")
 	var user User
 	_ = json.NewDecoder(request.Body).Decode(&user)
-	json.NewEncoder(respWriter).Encode(user)
+	insertedUser := insertUserIntoDb(user.Username)
+	json.NewEncoder(respWriter).Encode(insertedUser)
 }
 
 // Return all current users
 func getUsers(respWriter http.ResponseWriter, request *http.Request) {
+	respWriter.Header().Set("Content-Type", "application/json")
+	users := getAllUsersFromDb()
+	json.NewEncoder(respWriter).Encode(users)
 }
 
 // Get user with specific id
@@ -91,19 +95,54 @@ func getUser(respWriter http.ResponseWriter, request *http.Request) {
 	json.NewEncoder(respWriter).Encode(user)
 }
 
-func getUserFromDb(id int) User {
-	// Init database
-	psqlInfo := fmt.Sprintf("host=%s port=%d user=%s password=%s dbname=%s sslmode=disable", host, port, user, password, dbname)
-	db, err := sql.Open("postgres", psqlInfo)
-	err = db.Ping()
+// Inserts new user into database and returns
+func insertUserIntoDb(username string) User {
+	insertUserStatement := "INSERT INTO users (username) VALUES ($1) RETURNING id"
+	db := getDbConnection()
+	defer db.Close()
+
+	id := 0
+	err := db.QueryRow(insertUserStatement, username).Scan(&id)
 	if err != nil {
 		panic(err)
 	}
+	fmt.Println(id, username)
+	var user User
+	user.ID = id
+	user.Username = username
+	return user
+}
 
+func getAllUsersFromDb() []User {
+	getUsersStatement := "SELECT * FROM users"
+	db := getDbConnection()
+	defer db.Close()
+
+	rows, err := db.Query(getUsersStatement)
+	if err != nil {
+		panic(err)
+	}
+	var users []User
+	for rows.Next() {
+		var user User
+		err = rows.Scan(&user.Username, &user.ID)
+		if err != nil {
+			panic(err)
+		}
+		fmt.Println(user)
+		users = append(users, user)
+	}
+	return users
+}
+
+func getUserFromDb(id int) User {
 	var username string
 	getUserStatement := "SELECT * FROM users WHERE id=$1;"
+	db := getDbConnection()
+	defer db.Close()
+
 	row := db.QueryRow(getUserStatement, id)
-	switch err := row.Scan(&id, &username); err {
+	switch err := row.Scan(&username, &id); err {
 	case sql.ErrNoRows:
 		fmt.Println("No rows were returned!")
 	case nil:
@@ -115,4 +154,15 @@ func getUserFromDb(id int) User {
 	user.ID = id
 	user.Username = username
 	return user
+}
+
+func getDbConnection() *sql.DB {
+	// Init database
+	psqlInfo := fmt.Sprintf("host=%s port=%d user=%s password=%s dbname=%s sslmode=disable", host, port, user, password, dbname)
+	db, err := sql.Open("postgres", psqlInfo)
+	err = db.Ping()
+	if err != nil {
+		panic(err)
+	}
+	return db
 }
