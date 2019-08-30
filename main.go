@@ -60,6 +60,7 @@ func main() {
 	router.HandleFunc("/api/v1/users", getUsers).Methods("GET")
 	router.HandleFunc("/api/v1/user", getUser).Methods("GET")
 
+	println("Startup...")
 	log.Fatal(http.ListenAndServe(":8000", router))
 }
 
@@ -125,7 +126,7 @@ func getAllUsersFromDb() []User {
 	var users []User
 	for rows.Next() {
 		var user User
-		err = rows.Scan(&user.Username, &user.ID)
+		err = rows.Scan(&user.ID, &user.Username)
 		if err != nil {
 			panic(err)
 		}
