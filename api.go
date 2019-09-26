@@ -1,0 +1,40 @@
+package main
+
+import (
+	"encoding/json"
+	"log"
+	"net/http"
+	"strconv"
+)
+
+// Add new user with username
+func addUser(respWriter http.ResponseWriter, request *http.Request) {
+	respWriter.Header().Set("Content-Type", "application/json")
+	var user User
+	_ = json.NewDecoder(request.Body).Decode(&user)
+	insertedUser := insertUserIntoDb(user.Username)
+	json.NewEncoder(respWriter).Encode(insertedUser)
+}
+
+// Return all current users
+func getUsers(respWriter http.ResponseWriter, request *http.Request) {
+	respWriter.Header().Set("Content-Type", "application/json")
+	users := getAllUsersFromDb()
+	json.NewEncoder(respWriter).Encode(users)
+}
+
+// Get user with specific id
+func getUser(respWriter http.ResponseWriter, request *http.Request) {
+	respWriter.Header().Set("Content-Type", "application/json")
+	keys, ok := request.URL.Query()["id"]
+	if !ok || len(keys[0]) < 1 {
+		log.Println("Url Param 'id' is missing")
+		return
+	}
+	id, err := strconv.Atoi(keys[0])
+	if err != nil {
+		panic(err)
+	}
+	user := getUserFromDb(id)
+	json.NewEncoder(respWriter).Encode(user)
+}

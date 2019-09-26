@@ -32,6 +32,10 @@ go get github.com/gorilla/mux
 go get github.com/lib/pq
 ```
 
+### Run locally
+```
+> go run main.go database.go models.go api.go
+```
 
 ## Deploy
 Running in Abilia innovation project in a google app engine
