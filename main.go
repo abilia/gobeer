@@ -17,6 +17,9 @@ func main() {
 	router.HandleFunc("/api/v1/users", getUsers).Methods("GET")
 	router.HandleFunc("/api/v1/user", getUser).Methods("GET")
 
+	router.HandleFunc("/api/v1/tastings", getTastings).Methods("GET")
+	router.HandleFunc("/api/v1/tastings", addTasting).Methods("POST")
+
 	println("Startup...")
 	log.Fatal(http.ListenAndServe(":8000", router))
 }

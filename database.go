@@ -14,6 +14,17 @@ const (
 	dbname   = "beerdb"
 )
 
+func getDbConnection() *sql.DB {
+	// Init database
+	psqlInfo := fmt.Sprintf("host=%s port=%d user=%s password=%s dbname=%s sslmode=disable", host, port, user, password, dbname)
+	db, err := sql.Open("postgres", psqlInfo)
+	err = db.Ping()
+	if err != nil {
+		panic(err)
+	}
+	return db
+}
+
 // Inserts new user into database and returns
 func insertUserIntoDb(username string) User {
 	insertUserStatement := "INSERT INTO users (username) VALUES ($1) RETURNING id"
@@ -75,13 +86,31 @@ func getUserFromDb(id int) User {
 	return user
 }
 
-func getDbConnection() *sql.DB {
-	// Init database
-	psqlInfo := fmt.Sprintf("host=%s port=%d user=%s password=%s dbname=%s sslmode=disable", host, port, user, password, dbname)
-	db, err := sql.Open("postgres", psqlInfo)
-	err = db.Ping()
+func getAllTastings() []Tasting {
+	db := getDbConnection()
+	defer db.Close()
+
+	rows, err := db.Query("SELECT * FROM tastings")
 	if err != nil {
 		panic(err)
 	}
-	return db
+
+	var tastings []Tasting = make([]Tasting, 0)
+	for rows.Next() {
+		var tasting Tasting
+		rows.Scan(&tasting.ID, &tasting.Name)
+		tastings = append(tastings, tasting)
+	}
+	return tastings
+}
+
+func insertTasting(name string) {
+	db := getDbConnection()
+	defer db.Close()
+
+	id := 0
+	err := db.QueryRow("INSERT INTO tastings (name) VALUES ($1) RETURNING id", name).Scan(&id)
+	if err != nil {
+		panic(err)
+	}
 }

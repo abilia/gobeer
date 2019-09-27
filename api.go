@@ -38,3 +38,17 @@ func getUser(respWriter http.ResponseWriter, request *http.Request) {
 	user := getUserFromDb(id)
 	json.NewEncoder(respWriter).Encode(user)
 }
+
+// Get all tastings :
+func getTastings(respWriter http.ResponseWriter, request *http.Request) {
+	respWriter.Header().Set("Content-Type", "application/json")
+	response := getAllTastings()
+	json.NewEncoder(respWriter).Encode(response)
+}
+
+func addTasting(respWriter http.ResponseWriter, request *http.Request) {
+	respWriter.Header().Set("Content-Type", "application/json")
+	var tasting Tasting
+	_ = json.NewDecoder(request.Body).Decode(&tasting)
+	insertTasting(tasting.Name)
+}
