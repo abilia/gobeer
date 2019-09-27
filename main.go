@@ -20,6 +20,8 @@ func main() {
 	router.HandleFunc("/api/v1/tastings", getTastings).Methods("GET")
 	router.HandleFunc("/api/v1/tastings", addTasting).Methods("POST")
 
+	router.PathPrefix("/").Handler(http.FileServer(http.Dir("./static/")))
+
 	println("Startup...")
 	log.Fatal(http.ListenAndServe(":8000", router))
 }

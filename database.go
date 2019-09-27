@@ -8,7 +8,7 @@ import (
 // Database
 const (
 	host     = "localhost"
-	port     = 5432
+	port     = 5454
 	user     = "gobeeruser"
 	password = "thisisthepassword"
 	dbname   = "beerdb"

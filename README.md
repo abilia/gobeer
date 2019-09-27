@@ -42,15 +42,21 @@ go get github.com/lib/pq
 ## Deploy to beer.abilia-gbg.se
 
 #### Todo on beer.abilia-gbg.se
-- [ ] Create service
-- [ ] Create nginx configuration
-- [ ] Update DNS
+- [ x ] Setup database
+
+`docker run -p 5454:5432 --name gobeer -e POSTGRES_PASSWORD=secret -dt postgres`
+
+- [ ] Create systemd service
+- [ x ] Create nginx configuration
 - [ ] Use cert for beer.abilia-gbg.se
 
 For be able to deploy with:
-* Copy `./gobeer` to `/var/www/gobeer`
+* Copy `./gobeer` to `/var/www/beer/gobeer`
 * Restart service `sudo systemctl restart gobeer`
 
 
 ## Deploy to google app engine
-Running in Abilia innovation project in a google app engine
+Google App Engine at Abilia innovation project
+
+- [ ] Connect GO Google App Engine with GloudSQL
+- [ ] Setup proxy for development
