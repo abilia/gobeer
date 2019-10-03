@@ -65,18 +65,28 @@ func getTasting(respWriter http.ResponseWriter, request *http.Request) {
 }
 
 func addTasting(respWriter http.ResponseWriter, request *http.Request) {
-	respWriter.Header().Set("Content-Type", "application/json")
 	var tasting Tasting
 	_ = json.NewDecoder(request.Body).Decode(&tasting)
 	insertTasting(tasting.Name)
 }
 
 func deleteTasting(respWriter http.ResponseWriter, request *http.Request) {
-	respWriter.Header().Set("Content-Type", "application/json")
 	vars := mux.Vars(request)
 	id, err := strconv.Atoi(vars["id"])
 	if err != nil {
 		panic(err)
 	}
 	deleteTastingByID(id)
+}
+
+func getBeers(respWriter http.ResponseWriter, request *http.Request) {
+	vars := mux.Vars(request)
+	tastingID, err := strconv.Atoi(vars["tastingId"])
+	if err != nil {
+		panic(err)
+	}
+
+	response := getBeersByTastingID(tastingID)
+	respWriter.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(respWriter).Encode(response)
 }

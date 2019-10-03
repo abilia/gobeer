@@ -138,3 +138,21 @@ func deleteTastingByID(id int) {
 		panic(err)
 	}
 }
+
+func getBeersByTastingID(tastingID int) []Beer {
+	db := getDbConnection()
+	defer db.Close()
+
+	rows, err := db.Query("SELECT * FROM beers WHERE tastingID = $1", tastingID)
+	if err != nil {
+		panic(err)
+	}
+
+	var beers []Beer = make([]Beer, 0)
+	for rows.Next() {
+		var beer Beer
+		rows.Scan(&beer.ID, &beer.Name, &beer.TastingID)
+		beers = append(beers, beer)
+	}
+	return beers
+}
