@@ -90,3 +90,14 @@ func getBeers(respWriter http.ResponseWriter, request *http.Request) {
 	respWriter.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(respWriter).Encode(response)
 }
+
+func addBeer(respWriter http.ResponseWriter, request *http.Request) {
+	vars := mux.Vars(request)
+	tastingID, err := strconv.Atoi(vars["tastingId"])
+	if err != nil {
+		panic(err)
+	}
+	var beer Beer
+	_ = json.NewDecoder(request.Body).Decode(&beer)
+	insertBeer(tastingID, beer.Name)
+}

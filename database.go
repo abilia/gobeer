@@ -156,3 +156,14 @@ func getBeersByTastingID(tastingID int) []Beer {
 	}
 	return beers
 }
+
+func insertBeer(tastingID int, beerName string) {
+	db := getDbConnection()
+	defer db.Close()
+
+	id := 0
+	err := db.QueryRow("INSERT INTO beers (name, tastingID) VALUES ($1, $2) RETURNING id", beerName, tastingID).Scan(&id)
+	if err != nil {
+		panic(err)
+	}
+}
