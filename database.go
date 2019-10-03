@@ -104,25 +104,18 @@ func getAllTastings() []Tasting {
 	return tastings
 }
 
-func getTastingByID(id int) Tasting {
+func getTastingByID(id int) (Tasting, error) {
+	res := Tasting{}
 	var name string
+
 	db := getDbConnection()
 	defer db.Close()
 
-	row := db.QueryRow("SELECT * FROM tastings WHERE id = $1", id)
-	switch err := row.Scan(&id, &name); err {
-	case sql.ErrNoRows:
-		fmt.Println("No tasting found")
-	case nil:
-		fmt.Println(id, name)
-	default:
-		panic(err)
+	err := db.QueryRow("SELECT * FROM tastings WHERE id = $1", id).Scan(&id, &name)
+	if err == nil {
+		res = Tasting{ID: id, Name: name}
 	}
-
-	var tasting Tasting
-	tasting.ID = id
-	tasting.Name = name
-	return tasting
+	return res, err
 }
 
 func insertTasting(name string) {
@@ -131,6 +124,16 @@ func insertTasting(name string) {
 
 	id := 0
 	err := db.QueryRow("INSERT INTO tastings (name) VALUES ($1) RETURNING id", name).Scan(&id)
+	if err != nil {
+		panic(err)
+	}
+}
+
+func deleteTastingByID(id int) {
+	db := getDbConnection()
+	defer db.Close()
+
+	_, err := db.Exec("DELETE FROM tastings WHERE id = $1", id)
 	if err != nil {
 		panic(err)
 	}
