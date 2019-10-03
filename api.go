@@ -5,6 +5,8 @@ import (
 	"log"
 	"net/http"
 	"strconv"
+
+	"github.com/gorilla/mux"
 )
 
 // Add new user with username
@@ -43,6 +45,17 @@ func getUser(respWriter http.ResponseWriter, request *http.Request) {
 func getTastings(respWriter http.ResponseWriter, request *http.Request) {
 	respWriter.Header().Set("Content-Type", "application/json")
 	response := getAllTastings()
+	json.NewEncoder(respWriter).Encode(response)
+}
+
+func getTasting(respWriter http.ResponseWriter, request *http.Request) {
+	respWriter.Header().Set("Content-Type", "application/json")
+	vars := mux.Vars(request)
+	id, err := strconv.Atoi(vars["id"])
+	if err != nil {
+		panic(err)
+	}
+	response := getTastingByID(id)
 	json.NewEncoder(respWriter).Encode(response)
 }
 

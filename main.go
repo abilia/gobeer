@@ -18,6 +18,7 @@ func main() {
 	router.HandleFunc("/api/v1/user", getUser).Methods("GET")
 
 	router.HandleFunc("/api/v1/tastings", getTastings).Methods("GET")
+	router.HandleFunc("/api/v1/tastings/{id:[0-9]+}", getTasting).Methods("GET")
 	router.HandleFunc("/api/v1/tastings", addTasting).Methods("POST")
 
 	router.PathPrefix("/").Handler(http.FileServer(http.Dir("./static/")))
