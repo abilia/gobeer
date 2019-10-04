@@ -42,8 +42,9 @@ go get github.com/lib/pq
 
 ## Deploy to beer.abilia-gbg.se
 
+* Stop service `sudo service gobeer stop`
 * Copy `./gobeer` to `/build/beer/gobeer`
-* Restart service `sudo systemctl restart gobeer`
+* Start service `sudo service gobeer start`
 
 #### Todo on beer.abilia-gbg.se
 - [x] Setup database
