@@ -8,9 +8,9 @@ type Tasting struct {
 
 // Beer :
 type Beer struct {
-	ID        int     `json:"id"`
-	Name      string  `string:"name"`
-	TastingID Tasting `json:"tastingId"`
+	ID        int    `json:"id"`
+	Name      string `json:"name"`
+	TastingID int    `json:"tastingId"`
 }
 
 // User : Common user
