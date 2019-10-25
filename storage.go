@@ -12,6 +12,7 @@ import (
 
 const uploadPath = "pictures/"
 
+// DOES NOT WORK ON SERVER (prematurely closed connection)
 func uploadFile(respWriter http.ResponseWriter, request *http.Request) {
 	request.ParseMultipartForm(10 << 20)
 
