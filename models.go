@@ -13,6 +13,11 @@ type Beer struct {
 	TastingID int    `json:"tastingId"`
 }
 
+// Picture :
+type Picture struct {
+	UUID string `json:"id"`
+}
+
 // User : Common user
 type User struct {
 	ID       int    `json:"id"`
