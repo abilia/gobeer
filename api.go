@@ -67,7 +67,13 @@ func getTasting(respWriter http.ResponseWriter, request *http.Request) {
 func addTasting(respWriter http.ResponseWriter, request *http.Request) {
 	var tasting Tasting
 	_ = json.NewDecoder(request.Body).Decode(&tasting)
-	insertTasting(tasting.Name)
+	id := insertTasting(tasting.Name)
+
+	response, err := getTastingByID(id)
+	if err == nil {
+		respWriter.Header().Set("Content-Type", "application/json")
+		json.NewEncoder(respWriter).Encode(response)
+	}
 }
 
 func deleteTasting(respWriter http.ResponseWriter, request *http.Request) {

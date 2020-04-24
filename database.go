@@ -118,7 +118,7 @@ func getTastingByID(id int) (Tasting, error) {
 	return res, err
 }
 
-func insertTasting(name string) {
+func insertTasting(name string) int {
 	db := getDbConnection()
 	defer db.Close()
 
@@ -127,6 +127,7 @@ func insertTasting(name string) {
 	if err != nil {
 		panic(err)
 	}
+	return id
 }
 
 func deleteTastingByID(id int) {
