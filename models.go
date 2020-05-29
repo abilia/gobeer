@@ -30,3 +30,11 @@ type ScoreCard struct {
 	Beers  Beer `json:"beerId"`
 	Points int  `json:"points"`
 }
+
+// CoronaBeer : Beer drunk during corona
+type CoronaBeer struct {
+	ID      int    `json:"id"`
+	Name    string `json:"name"`
+	Drinker string `json:"drinker"`
+	Points  int    `json:"points"`
+}

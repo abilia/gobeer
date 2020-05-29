@@ -25,6 +25,11 @@ func main() {
 	router.HandleFunc("/api/v1/tastings/{tastingId:[0-9]+}/beers", getBeers).Methods("GET")
 	router.HandleFunc("/api/v1/tastings/{tastingId:[0-9]+}/beers", addBeer).Methods("POST")
 
+	router.HandleFunc("/api/v1/coronabeers", getAllCoronaBeers).Methods("GET")
+	router.HandleFunc("/api/v1/coronabeers/{id:[0-9]+}", getCoronaBeer).Methods("GET")
+	router.HandleFunc("/api/v1/coronabeers/{id:[0-9]+}", editCoronaBeer).Methods("PUT")
+	router.HandleFunc("/api/v1/coronabeers", addCoronaBeer).Methods("POST")
+
 	router.HandleFunc("/api/v1/pictures", uploadFile).Methods("POST")
 
 	router.PathPrefix("/").Handler(http.FileServer(http.Dir("./static/")))

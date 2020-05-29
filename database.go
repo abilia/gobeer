@@ -168,3 +168,59 @@ func insertBeer(tastingID int, beerName string) {
 		panic(err)
 	}
 }
+
+func getCoronaBeers() []CoronaBeer {
+	db := getDbConnection()
+	defer db.Close()
+
+	rows, err := db.Query("SELECT id, name, drinker, points FROM coronabeers")
+	if err != nil {
+		panic(err)
+	}
+
+	var coronabeers []CoronaBeer = make([]CoronaBeer, 0)
+	for rows.Next() {
+		var beer CoronaBeer
+		rows.Scan(&beer.ID, &beer.Name, &beer.Drinker, &beer.Points)
+		coronabeers = append(coronabeers, beer)
+	}
+	return coronabeers
+}
+
+func getCoronaBeerByID(id int) (CoronaBeer, error) {
+	res := CoronaBeer{}
+	var name string
+	var drinker string
+	var points int
+
+	db := getDbConnection()
+	defer db.Close()
+
+	err := db.QueryRow("SELECT * FROM coronabeers WHERE id = $1", id).Scan(&id, &name, &drinker, &points)
+	if err == nil {
+		res = CoronaBeer{ID: id, Name: name, Drinker: drinker, Points: points}
+	}
+	return res, err
+}
+
+func insertCoronaBeer(name string, drinker string, points int) int {
+	db := getDbConnection()
+	defer db.Close()
+
+	id := 0
+	err := db.QueryRow("INSERT INTO coronabeers (name, drinker, points) VALUES ($1, $2, $3) RETURNING id", name, drinker, points).Scan(&id)
+	if err != nil {
+		panic(err)
+	}
+	return id
+}
+
+func updateCoronaBeer(id int, name string, drinker string, points int) {
+	db := getDbConnection()
+	defer db.Close()
+
+	err := db.QueryRow("UPDATE coronabeers SET name=$2 WHERE id = $1 RETURNING id", id, name).Scan(&id)
+	if err != nil {
+		panic(err)
+	}
+}

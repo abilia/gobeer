@@ -25,7 +25,8 @@ Create table(s)
 ```
 CREATE TABLE users (id BIGSERIAL PRIMARY KEY, username TEXT);
 CREATE TABLE tastings (id BIGSERIAL PRIMARY KEY, name TEXT);
-CREATE TABLE beers (id BIGSERIAL PRIMARY KEY, name TEXT, tastingID int)
+CREATE TABLE beers (id BIGSERIAL PRIMARY KEY, name TEXT, tastingID int);
+CREATE TABLE coronabeers (id BIGSERIAL PRIMARY KEY, name TEXT, drinker TEXT, points INTEGER, created_at TIMESTAMP NOT NULL DEFAULT NOW());
 ```
 
 Install dependencies

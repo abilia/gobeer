@@ -107,3 +107,64 @@ func addBeer(respWriter http.ResponseWriter, request *http.Request) {
 	_ = json.NewDecoder(request.Body).Decode(&beer)
 	insertBeer(tastingID, beer.Name)
 }
+
+func getAllCoronaBeers(respWriter http.ResponseWriter, request *http.Request) {
+	respWriter.Header().Set("Content-Type", "application/json")
+	response := getCoronaBeers()
+	json.NewEncoder(respWriter).Encode(response)
+}
+
+func getCoronaBeer(respWriter http.ResponseWriter, request *http.Request) {
+	vars := mux.Vars(request)
+	id, err := strconv.Atoi(vars["id"])
+	if err != nil {
+		panic(err)
+	}
+
+	response, err := getCoronaBeerByID(id)
+	if err == nil {
+		respWriter.Header().Set("Content-Type", "application/json")
+		json.NewEncoder(respWriter).Encode(response)
+	} else {
+		respWriter.WriteHeader(http.StatusBadRequest)
+	}
+}
+
+func addCoronaBeer(respWriter http.ResponseWriter, request *http.Request) {
+	var beer CoronaBeer
+	_ = json.NewDecoder(request.Body).Decode(&beer)
+	id := insertCoronaBeer(beer.Name, beer.Drinker, beer.Points)
+
+	response, err := getCoronaBeerByID(id)
+	if err == nil {
+		respWriter.Header().Set("Content-Type", "application/json")
+		json.NewEncoder(respWriter).Encode(response)
+	}
+}
+
+func editCoronaBeer(respWriter http.ResponseWriter, request *http.Request) {
+	vars := mux.Vars(request)
+	id, err := strconv.Atoi(vars["id"])
+	if err != nil {
+		panic(err)
+	}
+
+	var beer CoronaBeer
+	_ = json.NewDecoder(request.Body).Decode(&beer)
+
+	dbBeer, err := getCoronaBeerByID(id)
+	if err != nil {
+		respWriter.WriteHeader(http.StatusBadRequest)
+	}
+
+	if id != dbBeer.ID {
+		respWriter.WriteHeader(http.StatusBadRequest)
+	}
+	updateCoronaBeer(id, beer.Name, beer.Drinker, beer.Points)
+
+	response, err := getCoronaBeerByID(id)
+	if err == nil {
+		respWriter.Header().Set("Content-Type", "application/json")
+		json.NewEncoder(respWriter).Encode(response)
+	}
+}
