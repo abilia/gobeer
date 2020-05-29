@@ -219,7 +219,7 @@ func updateCoronaBeer(id int, name string, drinker string, points int) {
 	db := getDbConnection()
 	defer db.Close()
 
-	err := db.QueryRow("UPDATE coronabeers SET name=$2 WHERE id = $1 RETURNING id", id, name).Scan(&id)
+	err := db.QueryRow("UPDATE coronabeers SET name=$2, drinker=$3, points=$4 WHERE id = $1 RETURNING id", id, name, drinker, points).Scan(&id)
 	if err != nil {
 		panic(err)
 	}
