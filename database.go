@@ -196,7 +196,7 @@ func getCoronaBeerByID(id int) (CoronaBeer, error) {
 	db := getDbConnection()
 	defer db.Close()
 
-	err := db.QueryRow("SELECT * FROM coronabeers WHERE id = $1", id).Scan(&id, &name, &drinker, &points)
+	err := db.QueryRow("SELECT id, name, drinker, points FROM coronabeers WHERE id = $1", id).Scan(&id, &name, &drinker, &points)
 	if err == nil {
 		res = CoronaBeer{ID: id, Name: name, Drinker: drinker, Points: points}
 	}
